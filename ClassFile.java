@@ -13,6 +13,8 @@ public class ClassFile
     private int majorVersion;
     private ConstantPool constantPool;
     private AccessFlags accessFlags;
+    private int thisClass;
+    private int superClass;
 
     // ...
 
@@ -32,6 +34,8 @@ public class ClassFile
         majorVersion = dis.readUnsignedShort();
         constantPool = new ConstantPool(dis);
         accessFlags = new AccessFlags(dis);
+        thisClass = dis.readUnsignedShort();
+        superClass = dis.readUnsignedShort();
 
         // Parse the rest of the class file
         // ...
@@ -45,8 +49,10 @@ public class ClassFile
             "Filename: %s\n" +
             "Magic: 0x%08x\n" +
             "Class file format version: %d.%d\n\n" +
-            "Constant pool:\n\n%s",
-            filename, magic, majorVersion, minorVersion, constantPool);
+            "Constant pool:\n\n%s" +
+            "This Class:%x\n" +
+            "Super Class:%x\n",
+            filename, magic, majorVersion, minorVersion, constantPool, thisClass, superClass);
     }
 }
 
