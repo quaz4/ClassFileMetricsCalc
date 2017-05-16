@@ -12,6 +12,7 @@ public class ClassFile
     private int minorVersion;
     private int majorVersion;
     private ConstantPool constantPool;
+    private AccessFlags accessFlags;
 
     // ...
 
@@ -30,9 +31,11 @@ public class ClassFile
         minorVersion = dis.readUnsignedShort();
         majorVersion = dis.readUnsignedShort();
         constantPool = new ConstantPool(dis);
+        accessFlags = new AccessFlags(dis);
 
         // Parse the rest of the class file
         // ...
+
     }
 
     /** Returns the contents of the class file as a formatted String. */
