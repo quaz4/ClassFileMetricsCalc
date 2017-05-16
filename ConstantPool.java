@@ -80,6 +80,12 @@ public class ConstantPool
         }
         return s;
     }
+
+    /** Returns the number of entries in the Constant Pool **/
+    public int getConstantPoolSize()
+    {
+        return entries.length;
+    }
 }
 
 /**

@@ -15,6 +15,8 @@ public class ClassFile
     private AccessFlags accessFlags;
     private int thisClass;
     private int superClass;
+    private Interfaces interfaces;
+    private Fields fields;
 
     // ...
 
@@ -34,8 +36,14 @@ public class ClassFile
         majorVersion = dis.readUnsignedShort();
         constantPool = new ConstantPool(dis);
         accessFlags = new AccessFlags(dis);
+
+        //TODO this and super class values need validation, see docs for details
         thisClass = dis.readUnsignedShort();
         superClass = dis.readUnsignedShort();
+
+        interfaces = new Interfaces(dis, constantPool);
+
+        fields = new Fields(dis);
 
         // Parse the rest of the class file
         // ...
