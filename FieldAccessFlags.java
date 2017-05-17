@@ -10,26 +10,26 @@ import java.lang.IllegalArgumentException;
  * @author Will Stewart
  */
 
-public class AccessFlags
+public class FieldAccessFlags
 {
-	private int[] flagValues = {1, 16, 32, 512, 1024, 4096, 8192, 16384};
+	private int[] flagValues = {1, 2, 4, 8, 16, 64, 128, 4096, 16384};
 
 
 	/** 
 	 * Values in flags array are associated with these flags
-	 * ACC_PUBLIC, ACC_FINAL, ACC_SUPER, ACC_INTERFACE, 
-	 * ACC_ABSTRACT, ACC_SYNTHETIC, ACC_ANNOTATION, ACC_ENUM
+	 * ACC_PUBLIC, ACC_PRIVATE, ACC_PROTECTED, ACC_STATIC,
+	 * ACC_FINAL, ACC_VOLATILE, ACC_TRANSIENT, ACC_SYNTHETIC, ACC_ENUM
 	 */
-	private boolean[] flags = new boolean[8];
+	private boolean[] flags = new boolean[9];
 
-	public AccessFlags(DataInputStream dis) throws IOException
+	public FieldAccessFlags(DataInputStream dis) throws IOException
 	{
 		int access = (Integer.valueOf(String.valueOf(dis.readUnsignedShort()), 10));
 
 		/** 
 		 * Step through each table entry to see if flags are set and table to correct values
 		 */
-		for(int i = 7; i >= 0; i--)
+		for(int i = 8; i >= 0; i--)
 		{
 			access = setFlag(access, i);
 			System.out.println(i + ": " + access);
@@ -41,7 +41,7 @@ public class AccessFlags
 	 */	
 	private int setFlag(int access, int tableIndex)
 	{
-		if(tableIndex < 0 || tableIndex > 7)
+		if(tableIndex < 0 || tableIndex > 8)
 		{
 			throw new IllegalArgumentException("Invalid tableIndex: " + tableIndex);
 		}

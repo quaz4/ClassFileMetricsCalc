@@ -7,32 +7,24 @@ import java.io.*;
  */
 public class Fields
 {
-	AccessFlags flags;
-	int nameIndex;
-	int descIndex;
-	int attCount;
-
-    //private CPEntry[] entries;
+    private FieldEntry[] entries;
 
     public Fields(DataInputStream dis) throws IOException
     {
     	int len = dis.readUnsignedShort();
-		flags = new AccessFlags(dis);
+    	entries = new FieldEntry[len];
 
-		nameIndex = dis.readUnsignedShort();
-		descIndex = dis.readUnsignedShort();
+		// Initialise entries to null.
+        for(int i = 0; i < len; i++)
+        {
+            entries[i] = null;
+        }
 
-		System.out.println("nameIndex: " + nameIndex);
-		System.out.println("descIndex: " + descIndex);
-		
-		attCount = dis.readUnsignedShort();
+        for(int i = 0; i < len; i++)
+        {
+        	entries[i] = new FieldEntry(dis);
+        }
 
-		//TODO Get attributes
+        //Attributes
     }
 }
-
-NOTE TO WILL:
-
-Need a new class called FieldInfo
-I half wrote it wrong, needs to be like the constant pool, 
-how its an array of values, there could be multiple values stored as fields
