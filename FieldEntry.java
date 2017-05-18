@@ -8,12 +8,15 @@ import java.io.*;
 
 public class FieldEntry
 {
-	FieldAccessFlags flags;
-	int nameIndex;
-	int descIndex;
-	int attCount;
+	private FieldAccessFlags flags;
+	private int nameIndex;
+	private int descIndex;
+	private int attCount;
+	private Attributes attributes;
 
-	public FieldEntry(DataInputStream dis) throws IOException
+	public FieldEntry(DataInputStream dis, ConstantPool cp) throws IOException, 
+															InvalidTagException,
+															InvalidConstantPoolIndex
 	{
 		flags = new FieldAccessFlags(dis);
 
@@ -23,6 +26,8 @@ public class FieldEntry
 		System.out.println("nameIndex: " + nameIndex);
 		System.out.println("descIndex: " + descIndex);
 		
-		attCount = dis.readUnsignedShort();
+		//attCount = dis.readUnsignedShort();
+		//Attributes
+        attributes = new Attributes(dis, cp);
 	}
 }

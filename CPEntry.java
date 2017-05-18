@@ -65,6 +65,8 @@ public abstract class CPEntry
      * as two entries.
      */
     public int getEntryCount() { return 1; }
+
+    public String getResolved() { return "Not implemented"; };
 }
 
 
@@ -88,6 +90,11 @@ class ConstantUtf8 extends CPEntry
         return String.format("length=%d, bytes=\"%s\"",
             bytes.length(), bytes);
     }
+
+    public String getResolved()
+    {
+        return this.bytes;
+    }
 }
 
 
@@ -104,6 +111,7 @@ class ConstantInteger extends CPEntry
     public int getIntValue()     { return value; }
     public String getTagString() { return "Integer"; }
     public String getValues()    { return String.format("value=%d", value); }
+
 }
 
 
@@ -120,6 +128,7 @@ class ConstantFloat extends CPEntry
     public float getFloatValue() { return value; }
     public String getTagString() { return "Float"; }
     public String getValues()    { return String.format("value=%f", value); }
+
 }
 
 
@@ -195,6 +204,13 @@ class ConstantClass extends CPEntry
     {
         return String.format("name_index=0x%02x", nameIndex);
     }
+
+    public String toString()
+    {
+        return String.format("%s", nameIndex);
+    }
+
+    public String getResolved() { return nameEntry.getResolved(); };
 }
 
 
@@ -227,6 +243,8 @@ class ConstantString extends CPEntry
     {
         return String.format("string_index=0x%02x", stringIndex);
     }
+
+    public String getResolved() { return stringEntry.getResolved(); };
 }
 
 
@@ -269,6 +287,7 @@ abstract class ConstantRef extends CPEntry
         return String.format("class_index=0x%02x, name_and_type_index=0x%02x",
             classIndex, nameAndTypeIndex);
     }
+    public String getResolved() { return nameAndTypeEntry.getResolved(); };
 }
 
 /** Represents a CONSTANT_Fieldref entry (tag == 9). */
@@ -343,6 +362,8 @@ class ConstantNameAndType extends CPEntry
         return String.format("name_index=0x%02x, type_index=0x%02x",
             nameIndex, typeIndex);
     }
+
+    public String getResolved() { return typeEntry.getResolved() + nameEntry.getResolved(); }
 }
 
 
@@ -377,6 +398,7 @@ class ConstantMethodHandle extends CPEntry
         return String.format("reference_kind=%d, reference_index=0x%02x", 
                              kind, index);
     }
+
 }
 
 
@@ -407,6 +429,8 @@ class ConstantMethodType extends CPEntry
     {
         return String.format("descriptor_index=0x%02x", index);
     }
+
+    public String getResolved() { return entry.getResolved(); }
 }
 
 

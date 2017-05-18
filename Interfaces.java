@@ -14,7 +14,10 @@ public class Interfaces
     																InvalidTagException
     {
     	int len = dis.readUnsignedShort();
+        //int random = dis.readUnsignedShort();
         entries = new CPEntry[len];
+
+        System.out.println("There are " + len + " interfaces in this class file");
 
         // Initialise entries to null.
         for(int i = 0; i < len; i++)

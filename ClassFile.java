@@ -13,10 +13,12 @@ public class ClassFile
     private int majorVersion;
     private ConstantPool constantPool;
     private AccessFlags accessFlags;
-    private int thisClass;
-    private int superClass;
+    private String thisClass;
+    private String superClass;
     private Interfaces interfaces;
     private Fields fields;
+    private Methods methods;
+    private Attributes attributes;
 
     // ...
 
@@ -35,19 +37,22 @@ public class ClassFile
         minorVersion = dis.readUnsignedShort();
         majorVersion = dis.readUnsignedShort();
         constantPool = new ConstantPool(dis);
+
+        System.out.println(constantPool);
+
         accessFlags = new AccessFlags(dis);
 
         //TODO this and super class values need validation, see docs for details
-        thisClass = dis.readUnsignedShort();
-        superClass = dis.readUnsignedShort();
+        thisClass = constantPool.getEntry(dis.readUnsignedShort()).getResolved();
+        superClass = constantPool.getEntry(dis.readUnsignedShort()).getResolved();
 
         interfaces = new Interfaces(dis, constantPool);
 
-        fields = new Fields(dis);
+        fields = new Fields(dis, constantPool);
 
-        // Parse the rest of the class file
-        // ...
+        methods = new Methods(dis, constantPool);
 
+        attributes = new Attributes(dis, constantPool);
     }
 
     /** Returns the contents of the class file as a formatted String. */
@@ -58,9 +63,8 @@ public class ClassFile
             "Magic: 0x%08x\n" +
             "Class file format version: %d.%d\n\n" +
             "Constant pool:\n\n%s" +
-            "This Class:%x\n" +
-            "Super Class:%x\n",
+            "This Class:%s\n" +
+            "Super Class:%s\n",
             filename, magic, majorVersion, minorVersion, constantPool, thisClass, superClass);
     }
 }
-

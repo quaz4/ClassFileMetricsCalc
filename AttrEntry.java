@@ -14,18 +14,43 @@ public abstract class AttrEntry
      * remain unresolved until the resolveReferences() method is called.
      */
     public static AttrEntry parse(DataInputStream dis, ConstantPool cp) throws IOException,
-                                                        InvalidTagException
+                                                        InvalidTagException, InvalidConstantPoolIndex
     {
-        AttrEntry entry;
+        System.out.println("ATTRIBUTE!");
+        AttrEntry entry = null;
         String tag = null;
-        byte[] b = new byte[2];
-        dis.readFully(b);
-        tag = new String(b);
+        //byte[] b = new byte[2];
+        //dis.readFully(b);
+        //tag = new String(b);
+        /*
+
+        System.out.println("YELP");
+        int value = dis.readUnsignedShort();
+        int temp = (Integer.valueOf(String.valueOf(value), 16));
+        //int temp = Integer.parseInt(dis.readUnsignedShort(), 16);
+
+        System.out.println(temp);
+
+        tag = cp.getEntry(temp).getResolved();
+        System.out.println("TAG: " + tag);*/
+
+        //dis.readUnsignedShort(); //This seems to make it work?
+
+
+
+        int value = dis.readUnsignedShort();
+        //System.out.println(temp);
+        //int temp = (Integer.valueOf(String.valueOf(value), 16));
+        System.out.println(value);
+        tag = cp.getEntry(value).getResolved();
+        System.out.println(tag);
+
+        //ConstantUtf8 
 
         switch(tag)
         {
             case  "ConstantValue": entry = new ConstantValue(dis);                                               break;
-            case  "Code": entry = new Code(dis);                                                                 break;
+            case  "Code": entry = new Code(dis, cp);                                                             break;
             case  "StackMapTable": entry = new StackMapTable(dis);                                               break;
             case  "Exceptions": entry = new Exceptions(dis);                                                     break;
             case  "InnerClasses": entry = new InnerClasses(dis);                                                 break;
@@ -46,10 +71,12 @@ public abstract class AttrEntry
             case  "BootstrapMethods": entry = new BootstrapMethods(dis);                                         break;
 
             default:
-                throw new InvalidTagException(
-                    String.format("Invalid tag: 0x%02x", tag));
+                System.out.println("YELP2");
+                //throw new InvalidTagException("Bad attribute tag");
 
         }
+
+        System.out.println("YELP3");
         return entry;
     }
 
@@ -62,21 +89,96 @@ public abstract class AttrEntry
 
 class ConstantValue extends AttrEntry
 {
+    private int attrLength;
+    private int constValueIndex;
+    private String nameString = null;
+
     public ConstantValue(DataInputStream dis) throws IOException
     {
-        byte[] b = new byte[4];
-        dis.readFully(b);
-        tag = new String(b);
+        attrLength = dis.readInt();
+        constValueIndex = dis.readUnsignedShort();
+    }
+
+    public void resolveReferences(ConstantPool cp) throws InvalidConstantPoolIndex
+    {
+        this.nameString = cp.getEntry(constValueIndex).toString();
     }
 
     public String getTagString() { return "ConstantValue"; }
+
+    public String getValue()
+    {
+        return nameString;
+    }
 }
 
 class Code extends AttrEntry
 {
-    public Code(DataInputStream dis) throws IOException
+    private int attrLength;
+    private int maxStack;
+    private int maxLocals;
+    private int codeLength;
+    private byte randomByte;
+    private Opcode[] code;
+    private byte[] labels;
+    private int excLen;
+    // exception stuffs
+    private int attrCount;
+
+    private int catchType;
+    private String[] exceptions;
+
+    private Attributes attributes;
+
+    public Code(DataInputStream dis, ConstantPool cp) throws IOException, InvalidConstantPoolIndex, InvalidTagException
     {
-        
+        attrLength = dis.readInt();
+
+        for(int i = 0; i < attrLength-1; i++)
+        {
+            dis.readByte();
+        }
+
+        //maxStack = dis.readUnsignedShort();
+        //maxLocals = dis.readUnsignedShort();
+        //codeLength = dis.readInt();
+        ////randomByte = dis.readByte(); //MAYBE NOT NEEDED ITS REALLY UNCLEAR, LIKE REALLY UNCLEAR
+
+
+/*
+        int i = 0;
+        int start = 0;
+        int size = 0;
+
+        while(i < codeLength)
+        {
+            byte[] b = new byte[1];
+            b[0] = dis.readByte();
+            Opcode oCode = Opcode.getOpcode(dis.readByte());
+            size = oCode.getSize(b, 0);
+            code[i] = oCode;
+
+            for(int k = i + 1; k < i + size; k++)
+            {
+                labels[k] = dis.readByte();
+            }
+
+            i += size;
+        }
+
+        excLen = dis.readUnsignedShort();
+        exceptions = new String[excLen];
+
+        for(i = 0; i < excLen; i++)
+        {
+            dis.readUnsignedShort();
+            dis.readUnsignedShort();
+            dis.readUnsignedShort();
+            exceptions[i] = cp.getEntry(dis.readUnsignedShort()).toString();
+        }
+
+        attributes = new Attributes(dis, cp);
+*/
     }
 
     public String getTagString() { return "Code"; }
@@ -84,13 +186,40 @@ class Code extends AttrEntry
 
 class StackMapTable extends AttrEntry
 {
+    private int attrLength;
+
     public StackMapTable(DataInputStream dis) throws IOException
     {
-        
+        attrLength = dis.readInt();
+
+        for(int i = 0; i < attrLength; i++)
+        {
+            dis.readByte();
+        }
     }
 
     public String getTagString() { return "StackMapTable"; }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class Exceptions extends AttrEntry
 {
@@ -146,7 +275,7 @@ class SourceFile extends AttrEntry
 {
     public SourceFile(DataInputStream dis) throws IOException
     {
-        
+        System.out.println("SOURCE FILE WOO");
     }
 
     public String getTagString() { return "SourceFile"; }
