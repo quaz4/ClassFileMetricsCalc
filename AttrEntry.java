@@ -16,36 +16,22 @@ public abstract class AttrEntry
     public static AttrEntry parse(DataInputStream dis, ConstantPool cp) throws IOException,
                                                         InvalidTagException, InvalidConstantPoolIndex
     {
-        System.out.println("ATTRIBUTE!");
+        File file = new File("log");
+        FileWriter log = new FileWriter(file, true);
+        
+        log.write("ATTRIBUTE:");
+
+        //System.out.println("ATTRIBUTE:");
         AttrEntry entry = null;
         String tag = null;
-        //byte[] b = new byte[2];
-        //dis.readFully(b);
-        //tag = new String(b);
-        /*
-
-        System.out.println("YELP");
-        int value = dis.readUnsignedShort();
-        int temp = (Integer.valueOf(String.valueOf(value), 16));
-        //int temp = Integer.parseInt(dis.readUnsignedShort(), 16);
-
-        System.out.println(temp);
-
-        tag = cp.getEntry(temp).getResolved();
-        System.out.println("TAG: " + tag);*/
-
-        //dis.readUnsignedShort(); //This seems to make it work?
-
-
 
         int value = dis.readUnsignedShort();
-        //System.out.println(temp);
-        //int temp = (Integer.valueOf(String.valueOf(value), 16));
-        System.out.println(value);
+
+        log.write(value);
+        //System.out.println(value);
         tag = cp.getEntry(value).getResolved();
-        System.out.println(tag);
-
-        //ConstantUtf8 
+        //System.out.println(tag);
+        log.write(tag);
 
         switch(tag)
         {
@@ -71,12 +57,10 @@ public abstract class AttrEntry
             case  "BootstrapMethods": entry = new BootstrapMethods(dis);                                         break;
 
             default:
-                System.out.println("YELP2");
-                //throw new InvalidTagException("Bad attribute tag");
+                throw new InvalidTagException("Bad attribute tag '" + tag + "'");
 
         }
 
-        System.out.println("YELP3");
         return entry;
     }
 
@@ -200,26 +184,6 @@ class StackMapTable extends AttrEntry
 
     public String getTagString() { return "StackMapTable"; }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class Exceptions extends AttrEntry
 {

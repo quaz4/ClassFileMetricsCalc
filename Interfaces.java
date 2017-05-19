@@ -7,6 +7,9 @@ import java.io.*;
  */
 public class Interfaces
 {
+    File file = new File("log");
+    FileWriter log = new FileWriter(file, true);
+
     private CPEntry[] entries;
 
     public Interfaces(DataInputStream dis, ConstantPool cp) throws InvalidConstantPoolIndex,
@@ -17,7 +20,8 @@ public class Interfaces
         //int random = dis.readUnsignedShort();
         entries = new CPEntry[len];
 
-        System.out.println("There are " + len + " interfaces in this class file");
+        log.write("There are " + len + " interfaces in this class file");
+        //System.out.println("There are " + len + " interfaces in this class file");
 
         // Initialise entries to null.
         for(int i = 0; i < len; i++)

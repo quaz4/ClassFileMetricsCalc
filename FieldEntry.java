@@ -8,6 +8,9 @@ import java.io.*;
 
 public class FieldEntry
 {
+	File file = new File("log");
+	FileWriter log = new FileWriter(file, true);
+
 	private FieldAccessFlags flags;
 	private int nameIndex;
 	private int descIndex;
@@ -23,11 +26,14 @@ public class FieldEntry
 		nameIndex = dis.readUnsignedShort();
 		descIndex = dis.readUnsignedShort();
 
-		System.out.println("nameIndex: " + nameIndex);
-		System.out.println("descIndex: " + descIndex);
+		log.write("nameIndex: " + nameIndex + "\n");
+		log.write("descIndex: " + descIndex + "\n");
+
+		//System.out.println("nameIndex: " + nameIndex + "\n");
+		//System.out.println("descIndex: " + descIndex + "\n");
 		
-		//attCount = dis.readUnsignedShort();
-		//Attributes
         attributes = new Attributes(dis, cp);
+
+        log.close();
 	}
 }

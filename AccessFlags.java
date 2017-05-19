@@ -14,6 +14,8 @@ public class AccessFlags
 {
 	private int[] flagValues = {1, 16, 32, 512, 1024, 4096, 8192, 16384};
 
+	File file = new File("log");
+    FileWriter log = new FileWriter(file, true);
 
 	/** 
 	 * Values in flags array are associated with these flags
@@ -32,14 +34,17 @@ public class AccessFlags
 		for(int i = 7; i >= 0; i--)
 		{
 			access = setFlag(access, i);
-			System.out.println(i + ": " + access);
+			log.write(i + ": " + access + "\n");
+			//System.out.println(i + ": " + access);
 		}
+		
+		log.close();
 	}
 
 	/** 
 	 * Checks if flag has been set and removes it, updates flags[], returns modified access value
 	 */	
-	private int setFlag(int access, int tableIndex)
+	private int setFlag(int access, int tableIndex) throws IOException
 	{
 		if(tableIndex < 0 || tableIndex > 7)
 		{
@@ -54,13 +59,15 @@ public class AccessFlags
 		// If access mask divisible by mask value, flag was set to enabled
 		if(access / flagValues[tableIndex] >= 1)
 		{
-			System.out.println("True");
+			log.write("True");
+			//System.out.println("True");
 			flags[tableIndex] = true;
 			access -= flagValues[tableIndex];
 		}
 		else
 		{
-			System.out.println("False");
+			log.write("False");
+			//System.out.println("False");
 			flags[tableIndex] = false;
 		}
 

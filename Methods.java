@@ -7,7 +7,10 @@ import java.io.*;
  */
 
 public class Methods
-{
+{   
+	File file = new File("log");
+    FileWriter log = new FileWriter(file, true);
+
 	private MethodAccessFlags flags;
     private String nameIndex;
     private String descIndex;
@@ -21,9 +24,14 @@ public class Methods
         nameIndex = cp.getEntry(dis.readUnsignedShort()).getResolved();
         descIndex = cp.getEntry(dis.readUnsignedShort()).getResolved();
 
-        System.out.println(nameIndex);
-        System.out.println(descIndex);
+        log.write(nameIndex);
+        log.write(descIndex);
+
+        //System.out.println(nameIndex);
+        //System.out.println(descIndex);
 
         attributes = new Attributes(dis, cp);
+
+        log.close();
 	}
 }

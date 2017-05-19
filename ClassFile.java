@@ -29,30 +29,42 @@ public class ClassFile
     public ClassFile(String filename) throws ClassFileParserException,
                                              IOException
     {
-        DataInputStream dis =
-            new DataInputStream(new FileInputStream(filename));
+        try
+        {
+            DataInputStream dis =
+                new DataInputStream(new FileInputStream(filename));
 
-        this.filename = filename;
-        magic = (long)dis.readUnsignedShort() << 16 | dis.readUnsignedShort();
-        minorVersion = dis.readUnsignedShort();
-        majorVersion = dis.readUnsignedShort();
-        constantPool = new ConstantPool(dis);
+            this.filename = filename;
+            magic = (long)dis.readUnsignedShort() << 16 | dis.readUnsignedShort();
+            minorVersion = dis.readUnsignedShort();
+            majorVersion = dis.readUnsignedShort();
+            constantPool = new ConstantPool(dis);
 
-        System.out.println(constantPool);
+            accessFlags = new AccessFlags(dis);
 
-        accessFlags = new AccessFlags(dis);
+            //TODO this and super class values need validation, see docs for details
+            thisClass = constantPool.getEntry(dis.readUnsignedShort()).getResolved();
+            superClass = constantPool.getEntry(dis.readUnsignedShort()).getResolved();
 
-        //TODO this and super class values need validation, see docs for details
-        thisClass = constantPool.getEntry(dis.readUnsignedShort()).getResolved();
-        superClass = constantPool.getEntry(dis.readUnsignedShort()).getResolved();
+            interfaces = new Interfaces(dis, constantPool);
 
-        interfaces = new Interfaces(dis, constantPool);
+            fields = new Fields(dis, constantPool);
 
-        fields = new Fields(dis, constantPool);
+            methods = new Methods(dis, constantPool);
 
-        methods = new Methods(dis, constantPool);
+            attributes = new Attributes(dis, constantPool);
 
-        attributes = new Attributes(dis, constantPool);
+        }
+        catch(IOException e)
+        {
+            System.out.printf("Cannot read \"%s\": %s\n",
+                filename, e.getMessage());
+        }
+        catch(ClassFileParserException e)
+        {
+            System.out.printf("Class file format error in \"%s\": %s\n",
+                filename, e.getMessage());
+        }
     }
 
     /** Returns the contents of the class file as a formatted String. */

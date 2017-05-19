@@ -7,6 +7,9 @@ import java.io.*;
  */
 public class Fields
 {
+    File file = new File("log");
+    FileWriter log = new FileWriter(file, true);
+
     private FieldEntry[] entries;
 
     public Fields(DataInputStream dis, ConstantPool cp) throws IOException, InvalidTagException, InvalidConstantPoolIndex
@@ -14,7 +17,9 @@ public class Fields
     	int len = dis.readUnsignedShort();
     	entries = new FieldEntry[len];
 
-        System.out.println("There are " + len + " fields in this class file");
+        log.write("There are " + len + " fields in this class file\n");
+
+        //System.out.println("There are " + len + " fields in this class file");
 
 		// Initialise entries to null.
         for(int i = 0; i < len; i++)
@@ -27,7 +32,6 @@ public class Fields
         	entries[i] = new FieldEntry(dis, cp);
         }
 
-        //Attributes
-        //attributes = new Attributes(dis, cp);
+    log.close();
     }
 }
